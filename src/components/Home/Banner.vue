@@ -11,6 +11,7 @@ const images = ref([{
 const index=ref(0)
 
 const setIndex=(idx)=>index.value=idx-1
+
 </script>
 
 <template>

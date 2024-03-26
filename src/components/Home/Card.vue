@@ -38,9 +38,10 @@ export default {
 <style scoped>
 .card {
     width: 270px;
-    height: 170px;
+    height: 165px;
     text-align: center;
     padding: 3px;
+    padding-top: 5px;
     list-style: none;
     /* border: 0px solid #ded2d2; */
     border-radius: 5px;

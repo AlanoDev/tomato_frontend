@@ -2,6 +2,7 @@
 import Banner from '@/components/Home/Banner.vue';
 import Card from '@/components/Home/Card.vue';
 
+
 </script>
 
 <template>
