@@ -1,7 +1,6 @@
 <script setup>
 import Home from '@/Layout/Home.vue'
 import NavBar from '@/Layout/NavBar.vue'
-import Card from './components/Home/Card.vue';
 </script>
 
 <template>
