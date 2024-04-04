@@ -1,11 +1,4 @@
 <script setup>
-import { computed, reactive, ref, watch, watchEffect } from 'vue';
-
-let base = reactive({
-    name: "tesatjdkajglkajl",
-    email: "test1--1-1",
-    password: "2222",
-})
 </script>
 
 <template>
@@ -14,12 +7,8 @@ let base = reactive({
 
 <style scoped>
 .login {
-    color: rgb(255, 255, 255);
-    background-color: #f796c6;
-    width: 40px;
-    height: 28px;
-    border-radius: 2px;
-    border: #f796c6;
-    font-size: 13px;
+    font-size: 14px;
+    border: none;
+    opacity: 0.9;;
 }
 </style>

@@ -1,69 +1,46 @@
 <template>
     <div class="card">
-        <img src="../../../src/assets/1.jpeg" alt>
-        <h3>标题 </h3>
+        <div class="img">
+            <img src="../../../src/assets/1.jpeg" alt>
+        </div>
+        <div>
+            <span>标题 </span>
+        </div>
     </div>
 </template>
-  
+
 <script>
 export default {
-    // data() {
-    //     return {
-    //         list: [
-    //             {
-    //                 value: '0',
-    //                 src: "../../../src/assets/1.jpeg",
-    //                 title: "番茄病害",
-    //             },
-    //             {
-    //                 value: '0',
-    //                 src: "../../../src/assets/2.jpeg",
-    //                 title: "番茄病害",
-    //             }, {
-    //                 value: '0',
-    //                 src: "../../../src/assets/3.jpeg",
-    //                 title: "番茄病害",
-    //             },
-    //             {
-    //                 value: '0',
-    //                 src: "../../../src/assets/3.jpeg",
-    //                 title: "番茄病害",
-    //             },
-    //         ]
-    //     }
-    // }
 }
 </script>
-  
+
 <style scoped>
 .card {
-    width: 270px;
-    height: 165px;
-    text-align: center;
-    padding: 3px;
-    padding-top: 5px;
-    list-style: none;
-    /* border: 0px solid #ded2d2; */
+    width: 440px;
+    height: 220px;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px 0px rgba(41, 40, 40, 0.5);
-    position: relative;
-
-}
-
-.card:hover{
+    padding-bottom: 10px;
     background-color: #ececf7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:space-between;
+    overflow: hidden;
 }
 
-img {
-    width: 250px;
-    height: 140px;
+.card:hover {
+    box-shadow: 0px 0px 10px 0px rgba(41, 40, 40, 0.5);
+    transform: translateY(-5px);
+    transition: all 0.3s;
+}
+.img{
+    width: 100%;
+    height: calc(100% - 30px);
+}
+.img>img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-}
-
-h3 {
-    margin-top: 10px;
-    position: absolute;
-    top: 140px;
 }
 
 </style>

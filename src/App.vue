@@ -1,19 +1,9 @@
 <script setup>
-import Home from '@/Layout/Home.vue'
-import NavBar from '@/Layout/NavBar.vue'
+import Layout from '@/Layout/Layout.vue'
 </script>
 
 <template>
-  <div class="layout">
-    <NavBar/>
-    <Home />
-  </div>
+  <Layout />
 </template>
 
-<style scoped>
-.layout {
-  width: 100vw;
-  height: 100vh;
-  background-color: #f0f2f5;
-}
-</style>
+<style scoped></style>
