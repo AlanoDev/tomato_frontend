@@ -7,12 +7,13 @@ const store = useProfileStore();
     <div class="navigation_bar">
         <div class="navigation_avatar"></div>
         <div class="navigation_info">
-            <div class="info_item">Name</div>
-            <div class="info_item">Role</div>
+            <div class="info_item">{{ store.name }}</div>
+            <div class="info_item">{{ store.role }}</div>
         </div>
         <div class="navigation_divider"></div>
         <template v-for="(item, index) in store.items">
-            <div class="navigation_item" :class="{navigation_item_active:store.currentIndex==index}"  @click="() => { store.currentIndex = index }">
+            <div class="navigation_item" :class="{ navigation_item_active: store.currentIndex == index }"
+                @click="() => { store.currentIndex = index }">
                 <p>{{ item }}</p>
             </div>
         </template>
@@ -44,7 +45,8 @@ const store = useProfileStore();
     justify-content: center;
     cursor: pointer;
 }
-.navigation_item_active{
+
+.navigation_item_active {
     background-color: gray;
 
 }
@@ -61,7 +63,7 @@ const store = useProfileStore();
     column-gap: 10px;
     margin: 10px;
     margin-bottom: 10px;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .info_item {
@@ -69,7 +71,7 @@ const store = useProfileStore();
     align-items: center;
     justify-content: center;
     height: 20px;
-    padding: 0 20px;
+    padding: 5px 20px;
     background-color: white;
     border-radius: 5px;
     color: gray;

@@ -17,8 +17,8 @@ const onDelete = (id) => {
 
 <style scoped>
 .history_container {
-    width: 100%;
-    height: 100%;
+    width: 98%;
+    height: 98%;
     padding-top: 40px;
     padding-bottom: 40px;
     background-color: #dfdfdf;
@@ -30,7 +30,7 @@ const onDelete = (id) => {
     overflow:scroll;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
-    
+   border-radius: 10px; 
 }
 .history_container::-webkit-scrollbar {
     display: none;

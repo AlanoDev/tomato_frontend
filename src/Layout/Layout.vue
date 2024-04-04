@@ -20,4 +20,4 @@ import { store } from '@/stores/layoutStore'
     background-color: #f0f2f5;
     margin: 0 auto;
 }
-</style>@/stores/layoutStore
+</style>
