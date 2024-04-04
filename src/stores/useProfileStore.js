@@ -1,8 +1,12 @@
 import { onMounted, reactive, watchEffect } from "vue";
+import useArticleStore from "./useArticleStore";
 const profileStore = reactive({
   role: "admin",
-  name: "name",
+  name: "myname",
+  email: "email",
+  createDate: "2021-10-10",
   currentIndex: 0,
+  editId: 0,
   items: ["History", "Profile"],
   histories: [
     {
@@ -79,5 +83,9 @@ export default function useProfileStore() {
       profileStore.items.push("Articles");
     profileStore.items.includes("Edit") || profileStore.items.push("Edit");
   }
+  onMounted(() => {
+    const articleStore = useArticleStore();
+    profileStore.editId = articleStore.articles[0].id;
+  });
   return profileStore;
 }

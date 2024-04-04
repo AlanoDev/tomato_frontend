@@ -1,8 +1,16 @@
 <script setup>
 import useArticleStore from '@/stores/useArticleStore';
+import useProfileStore from '@/stores/useProfileStore';
 
 const store = useArticleStore();
-
+const profileStore = useProfileStore();
+const onDelete = (id) => {
+    store.articles = store.articles.filter(item => item.id !== id);
+}
+const onEdit = (id) => {
+    profileStore.currentIndex = 3;
+    profileStore.editId = id;
+}
 </script>
 
 <template>
@@ -13,14 +21,14 @@ const store = useArticleStore();
                     <img src="https://picsum.photos/200/300" alt="">
                 </div>
                 <div class="item_title">
-                    Title
+                    {{ article.title }}
                 </div>
                 <div class="item_date">
-                    2024-4-4
+                    {{ article.date }}
                 </div>
                 <div class="item_operation">
-                    <button class="item_edit">Edit</button>
-                    <button class="item_delete">Delete</button>
+                    <button class="item_edit" @click="onEdit(article.id)">Edit</button>
+                    <button class="item_delete" @click="onDelete(article.id)">Delete</button>
                 </div>
             </div>
         </template>
@@ -37,11 +45,18 @@ const store = useArticleStore();
     box-sizing: border-box;
     margin: 0 auto;
     display: flex;
-    justify-content: center;
     flex-direction: column;
+    justify-content: start;
+    align-items: center;
     row-gap: 10px;
     border-radius: 10px;
     padding-top: 40px;
+    padding-bottom: 40px;
+    overflow: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+
 }
 
 .article_item {
@@ -52,6 +67,11 @@ const store = useArticleStore();
     display: flex;
     align-items: center;
     border-radius: 5px;
+}
+
+.article_item:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
 }
 
 .item_img {
