@@ -1,17 +1,25 @@
 <template>
     <div class="card">
         <div class="img">
-            <img src="../../../src/assets/1.jpeg" alt>
+            <img :src="img" alt>
         </div>
         <div>
-            <span>标题 </span>
+            <span>{{ title }} </span>
         </div>
     </div>
 </template>
 
-<script>
-export default {
-}
+<script setup>
+const props = defineProps({
+    title: {
+        type: String,
+        default: 'title'
+    },
+    img: {
+        type: String,
+        default: ''
+    }
+})
 </script>
 
 <style scoped>
@@ -24,7 +32,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content:space-between;
+    justify-content: space-between;
     overflow: hidden;
 }
 
@@ -33,14 +41,15 @@ export default {
     transform: translateY(-5px);
     transition: all 0.3s;
 }
-.img{
+
+.img {
     width: 100%;
     height: calc(100% - 30px);
 }
+
 .img>img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 </style>

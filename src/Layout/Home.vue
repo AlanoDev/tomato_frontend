@@ -2,7 +2,69 @@
 import Banner from '@/components/Home/Banner.vue';
 import Card from '@/components/Home/Card.vue';
 import NavBar from '@/Layout/NavBar.vue'
+import useArticleStore from '@/stores/useArticleStore';
+import useProfileStore from '@/stores/useProfileStore';
+import { ref, watchEffect } from 'vue';
+import { store } from '@/stores/layoutStore';
+const articleStore = useArticleStore();
+const profileStore = useProfileStore();
 
+let articles = articleStore.articles.slice(0, 8);
+const onCardClick = (id, idx) => {
+    store.currentPage = 'article';
+    store.lastPage = 'home';
+    store.articleId = id;
+    if (profileStore.histories.find(history => history.id === id) === undefined) {
+        console.log(profileStore.histories);
+        profileStore.histories.push({
+            id: id,
+            date: new Date().toLocaleString(),
+        });
+
+    }
+}
+
+
+const searchInput = ref('');
+watchEffect(() => {
+    if (searchInput.value.length === 0) {
+        articles = articleStore.articles.slice(0, 8);
+    } else {
+        articles = articleStore.articles.filter(article => article.title.includes(searchInput.value)).slice(0, 8);
+    }
+})
+const onSearchClick = () => {
+    if (searchInput.value.length === 0) {
+        articles = articleStore.articles.slice(0, 8);
+    } else {
+        articles = articleStore.articles.filter(article => article.title.includes(searchInput.value)).slice(0, 8);
+    }
+}
+const onUploadClick = async () => {
+    try {
+        const fileHandle = await window.showOpenFilePicker({
+            multiple: false,
+            excludeAcceptAllOption: true,
+            types: [
+                {
+                    description: 'Images',
+                    accept: {
+                        'image/png': ['.png'],
+                        'image/jpeg': ['.jpg'],
+                    },
+                },
+            ],
+        })
+        const fileData = await fileHandle[0].getFile();
+        const reader = new FileReader()
+        reader.onload = () => {
+            articleInfo.img = reader.result
+        }
+        reader.readAsDataURL(fileData)
+    } catch (error) {
+        console.log(error);
+    }
+}
 </script>
 
 <template>
@@ -12,17 +74,14 @@ import NavBar from '@/Layout/NavBar.vue'
             <Banner />
         </div>
         <div class="cards">
-            <template v-for="i in 8">
-                <Card></Card>
+            <template v-for="(article, idx) in articles" :key="article.id">
+                <Card :title="article.title" :img="article.img" @click="onCardClick(article.id, idx)"></Card>
             </template>
         </div>
-        <div>
-            <img class="more" src="../../src/assets/icon/more.png" />
-        </div>
         <div class="search_bar">
-            <input type="text" class="search_input">
-            <button>搜索</button>
-            <button>上传</button>
+            <input type="text" class="search_input" v-model="searchInput">
+            <button @click="onSearchClick">搜索</button>
+            <button @click="onUploadClick">上传</button>
         </div>
     </div>
 </template>
@@ -59,7 +118,8 @@ import NavBar from '@/Layout/NavBar.vue'
     align-items: center;
     opacity: 0.9;
 }
-.search_bar>button{
+
+.search_bar>button {
     width: 120px;
     height: 50px;
     border: none;
@@ -68,10 +128,11 @@ import NavBar from '@/Layout/NavBar.vue'
     background-color: white;
 }
 
-.search_bar>button:hover{
-   box-shadow: 0px 0px 10px 0px rgba(41, 40, 40, 0.5);
+.search_bar>button:hover {
+    box-shadow: 0px 0px 10px 0px rgba(41, 40, 40, 0.5);
 }
-.search_bar>input{
+
+.search_bar>input {
     height: 95%;
     width: 70%;
     border: none;
@@ -80,9 +141,11 @@ import NavBar from '@/Layout/NavBar.vue'
     border-radius: 50px;
     box-shadow: 0px 0px 10px 0px rgba(41, 40, 40, 0.5);
 }
-.search_bar>input:hover{
+
+.search_bar>input:hover {
     box-shadow: 0px 0px 10px 0px rgba(41, 40, 40, 0.8);
 }
+
 .cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -93,19 +156,7 @@ import NavBar from '@/Layout/NavBar.vue'
     margin-bottom: 10px;
 }
 
-.more {
-    position: absolute;
-    right: 6%;
-    top: 72%;
-    width: 25px;
-    height: 25px;
-}
-
-.more:hover {
-    width: 30px;
-    height: 30px;
-}
-.navbar{
+.navbar {
     position: absolute;
     top: 0;
     left: 0;

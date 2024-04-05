@@ -1,5 +1,6 @@
 import { onMounted, reactive, watchEffect } from "vue";
 import useArticleStore from "./useArticleStore";
+import useUserStore from "./useUserStore";
 const profileStore = reactive({
   role: "admin",
   name: "myname",
@@ -7,81 +8,20 @@ const profileStore = reactive({
   createDate: "2021-10-10",
   currentIndex: 0,
   editId: 0,
-  items: ["History", "Profile"],
-  histories: [
-    {
-      name: "History1",
-      id: 0,
-      date: "2021-10-10",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History2",
-      id: 1,
-      date: "2021-10-11",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History3",
-      id: 2,
-      date: "2021-10-12",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History4",
-      id: 3,
-      date: "2021-10-13",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History5",
-      id: 4,
-      date: "2021-10-14",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History6",
-      id: 5,
-      date: "2021-10-15",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History7",
-      id: 6,
-      date: "2021-10-16",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History8",
-      id: 7,
-      date: "2021-10-16",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History9",
-      id: 8,
-      date: "2021-10-16",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History10",
-      id: 9,
-      date: "2021-10-16",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-    {
-      name: "History11",
-      id: 10,
-      date: "2021-10-16",
-      img: "https://images.unsplash.com/photo-1634170380004-3b3b3b3b3b3b",
-    },
-  ],
+  items: ["History", "Profile", "Favorites"],
+  histories: [],
+  favorites: [],
 });
 export default function useProfileStore() {
-  if (profileStore.role === "admin") {
-    profileStore.items.includes("Articles") ||
-      profileStore.items.push("Articles");
-    profileStore.items.includes("Edit") || profileStore.items.push("Edit");
+  const userStore = useUserStore();
+  if (!userStore.isLogin) {
+    if (profileStore.role === "admin") {
+      profileStore.items.includes("Articles") ||
+        profileStore.items.push("Articles");
+      profileStore.items.includes("Edit") || profileStore.items.push("Edit");
+    }
+    profileStore.histories.splice(0, profileStore.histories.length);
+    profileStore.favorites.splice(0, profileStore.favorites.length);
   }
   onMounted(() => {
     const articleStore = useArticleStore();

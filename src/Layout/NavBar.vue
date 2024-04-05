@@ -1,13 +1,19 @@
 <script setup>
 import LoginButton from '@/components/NavBar/LoginButton.vue';
-import LoginDialog from '@/components/Common/LoginDialog.vue';
-import {store} from '@/stores/layoutStore';
+import LoginDialog from '@/components/Common/LoginDialog';
+import useUserStore from '@/stores/useUserStore';
+import { store } from '@/stores/layoutStore';
 import { ref } from 'vue';
-
-const showDialog = ref(false);
-const onClick = () => {1
-    showDialog.value = true;
-    store.currentPage = 'profile';
+const userStore = useUserStore();
+const onClick = () => {
+    LoginDialog.show((res) => {
+        if(res=='login')
+            userStore.isLogin = true;
+    })
+}
+const onAvatarClick=()=>{
+    store.currentPage='profile';
+    store.lastPage='home';
 }
 
 </script>
@@ -15,8 +21,8 @@ const onClick = () => {1
 <template>
     <div class="container">
         <div class="padding"></div>
-        <LoginButton class="item" @click="onClick" />
-        <LoginDialog :show="showDialog" @close="showDialog = false" />
+        <LoginButton class="item" @click="onClick" v-if="!userStore.isLogin" />
+        <div class="avatar" @click="onAvatarClick" v-else></div>
     </div>
 </template>
 
@@ -32,7 +38,7 @@ const onClick = () => {1
 }
 
 .padding {
-    flex: 23;
+    width: 95%;
 }
 
 .item {
@@ -42,5 +48,13 @@ const onClick = () => {1
 
 .item:hover {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: gray;
+    border-radius: 50%;
+    margin: 5px;
 }
 </style>@/stores/layoutStore

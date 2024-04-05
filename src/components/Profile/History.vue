@@ -1,16 +1,22 @@
 <script setup>
 import useProfileStore from '@/stores/useProfileStore';
 import HistoryItem from '@/components/Profile/HistoryItem.vue';
-const store = useProfileStore();
+import { store } from '@/stores/layoutStore';
+const profileStore = useProfileStore();
 const onDelete = (id) => {
-    store.histories = store.histories.filter(item => item.id !== id);
+    profileStore.histories = profileStore.histories.filter(item => item.id !== id);
+}
+const onHistoryItemClick = (id) => {
+    store.currentPage = 'article';
+    store.lastPage = 'profile';
+    store.articleId = id;
 }
 </script>
 
 <template>
     <div class="history_container">
-        <template v-for="(item, index) in store.histories" :key="item.id">
-            <HistoryItem :title="item.name" :id="item.id" :date="item.date" :img="item.img" @delete="onDelete" />
+        <template v-for="(item, index) in profileStore.histories" :key="item.id">
+            <HistoryItem @click="onHistoryItemClick(item.id)" :id="item.id" :date="item.date" @delete="onDelete" />
         </template>
     </div>
 </template>
@@ -27,11 +33,14 @@ const onDelete = (id) => {
     flex-direction: column;
     row-gap: 10px;
     align-items: center;
-    overflow:scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-   border-radius: 10px; 
+    overflow: scroll;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+    border-radius: 10px;
 }
+
 .history_container::-webkit-scrollbar {
     display: none;
 }

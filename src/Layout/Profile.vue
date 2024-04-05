@@ -3,10 +3,17 @@ import LeftNavigationBar from '@/components/Profile/LeftNavigationBar.vue';
 import Articles from '@/components/Profile/Articles.vue';
 import History from '@/components/Profile/History.vue';
 import Profile from '@/components/Profile/Profile.vue';
+import Favorite from '@/components/Profile/Favorite.vue';
 import Edit from '@/components/Profile/Edit.vue';
 import useProfileStore from '@/stores/useProfileStore';
+import useUserStore from '@/stores/useUserStore';
 import { store } from '@/stores/layoutStore';
 const profileStore = useProfileStore();
+const userStore = useUserStore();
+const onLogOut = () => {
+    userStore.isLogin = false;
+    store.currentPage = 'home';
+}
 </script>
 
 <template>
@@ -15,12 +22,13 @@ const profileStore = useProfileStore();
         <div class="profile_content">
             <History v-if="profileStore.currentIndex == 0" />
             <Profile v-else-if="profileStore.currentIndex == 1" />
-            <Articles v-else-if="profileStore.currentIndex == 2" />
-            <Edit v-else-if="profileStore.currentIndex == 3" />
+            <Favorite v-else-if="profileStore.currentIndex == 2" />
+            <Articles v-else-if="profileStore.currentIndex == 3" />
+            <Edit v-else-if="profileStore.currentIndex == 4" />
         </div>
         <div class="profile_operation">
             <button @click="store.currentPage = 'home'">Home</button>
-            <button @click="store.currentPage = 'home'">Logout</button>
+            <button @click="onLogOut">Logout</button>
         </div>
     </div>
 </template>
