@@ -1,26 +1,54 @@
 <script setup>
 import useProfileStore from '@/stores/useProfileStore';
 import useArticleStore from '@/stores/useArticleStore';
+import Toast from '@/components/Common/Toast'
 import { reactive } from 'vue';
-
 const profileStore = useProfileStore();
 const articleStore = useArticleStore();
 const article = articleStore.articles.find(item => item.id == profileStore.editId);
 
 const articleInfo = reactive({
     title: article.title,
-    content: article.content
+    content: article.content,
+    img: article.img
 })
 
-const onResetClick=()=>{
+const onResetClick = () => {
     articleInfo.title = article.title;
     articleInfo.content = article.content;
+    articleInfo.img = article.img;
 }
 
-const onSaveClick=()=>{
+const onSaveClick = () => {
     article.title = articleInfo.title;
     article.content = articleInfo.content;
+    article.img = articleInfo.img;
+    Toast.show({
+        message: "save success",
+    }, () => { })
 }
+const onImgClick = async () => {
+    const fileHandle = await window.showOpenFilePicker({
+        multiple: false,
+        excludeAcceptAllOption: true,
+        types: [
+            {
+                description: 'Images',
+                accept: {
+                    'image/png': ['.png'],
+                    'image/jpeg': ['.jpg'],
+                },
+            },
+        ],
+    })
+    const fileData = await fileHandle[0].getFile();
+    const reader = new FileReader()
+    reader.onload = () => {
+        articleInfo.img = reader.result
+    }
+    reader.readAsDataURL(fileData)
+}
+
 </script>
 
 <template>
@@ -28,6 +56,10 @@ const onSaveClick=()=>{
         <div class="edit_title">
             <label>Title:</label>
             <input type="text" v-model="articleInfo.title">
+        </div>
+        <div class="edit_img" @click="onImgClick">
+            <label>Cover:</label>
+            <img :src="articleInfo.img" alt="">
         </div>
         <div class="edit_content">
             <div>Content:</div>
@@ -52,6 +84,26 @@ const onSaveClick=()=>{
     display: flex;
     flex-direction: column;
     border-radius: 10px;
+}
+
+.edit_img {
+    width: 100%;
+    height: 18%;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+    column-gap: 20px;
+}
+
+.edit_img img {
+    width: 150px;
+    height: 150px;
+}
+
+.edit_img label {
+    font-size: 20px;
 }
 
 .edit_title {
@@ -79,7 +131,7 @@ const onSaveClick=()=>{
 
 .edit_content {
     width: 98%;
-    height: 88%;
+    height: 70%;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -108,6 +160,7 @@ const onSaveClick=()=>{
     box-sizing: border-box;
     column-gap: 20px;
 }
+
 .edit_operation button {
     width: 80px;
     height: 40px;

@@ -1,39 +1,47 @@
 <script setup>
-import { defineEmits } from 'vue';
-
+import useArticleStore from '@/stores/useArticleStore';
+import { ref } from 'vue';
+const store = useArticleStore();
 const emit = defineEmits(['delete']);
 const props = defineProps({
-    title: {
-        type: String,
-        default: 'Title',
-        required: true
-    },
     id: {
         type: Number,
         required: true
     },
-    img: String,
     date: {
         type: String,
         default: '2024-4-4',
     },
 })
+const valid = ref(true);
+const history = store.articles.find(item => item.id == props.id);
+if (history == undefined) {
+    valid.value = false;
+}
 </script>
 
 <template>
     <div class="history_item_container">
-        <div class="item_img">
-            <img :src="props.img" alt="">
-        </div>
-        <div class="item_title">
-            {{ props.title }}
-        </div>
-        <div class="item_date">
-            {{ props.date }}
-        </div>
-        <div class="item_delete">
-            <button @click="emit('delete', props.id)">Delete</button>
-        </div>
+        <template v-if="valid">
+            <div class="item_img">
+                <img :src="history.img" alt="">
+            </div>
+            <div class="item_title">
+                {{ history.title }}
+            </div>
+            <div class="item_date">
+                {{ props.date }}
+            </div>
+            <div class="item_delete">
+                <button @click.stop="emit('delete', props.id)">Delete</button>
+            </div>
+        </template>
+        <template v-else>
+            <div class="invalid">Invalid history</div>
+            <div class="item_delete">
+                <button @click.stop="emit('delete', props.id)">Delete</button>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -46,6 +54,7 @@ const props = defineProps({
     display: flex;
     align-items: center;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .history_item_container:hover {
@@ -92,5 +101,16 @@ const props = defineProps({
 
 .item_delete button:hover {
     background-color: darkred;
+}
+
+.invalid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: red;
 }
 </style>

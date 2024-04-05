@@ -1,47 +1,34 @@
 <template>
     <div>
-        <teleport to="body">
-            <div v-if="props.show" class="login-dialog">
-                <div class="dialog-content">
-                    <h2 class="login_text">登录</h2>
-                    <form @submit.prevent="login">
-                        <div class="form-group">
-                            <label for="username">用户名:</label>
-                            <input type="text" id="username " v-model="loginForm.username" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">密码:</label>
-                            <input type="password" id="password" v-model="loginForm.password" required>
-                        </div>
-                        <button @click="onClick" class="login_button">登录</button>
-                        <img @click="emits('close')" src="../../../src/assets/icon/cancel.png" class="img_style">
-                    </form>
-                </div>
+        <div class="login-dialog">
+            <div class="dialog-content">
+                <h2 class="login_text">登录</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="username">用户名:</label>
+                        <input type="text" id="username " v-model="loginForm.username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码:</label>
+                        <input type="password" id="password" v-model="loginForm.password" required>
+                    </div>
+                    <button @click="onClick" class="login_button">登录</button>
+                    <img src="../../../assets/icon/cancel.png" @click="close('cancel')" class="img_style">
+                </form>
             </div>
-        </teleport>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 const props = defineProps({
-    show: Boolean,
+    close: Function,
 })
-const emits = defineEmits(["close"])
-const showLogin = ref(false);
 const loginForm = ref({
     username: '',
     password: ''
 });
-
-const login = () => {
-    // 这里应该是登录逻辑，例如发送请求到服务器验证用户名和密码
-    console.log('登录信息', loginForm.value);
-    // 登录成功后的操作，例如保存token或用户信息
-
-    // 关闭登录对话框
-    showLogin.value = false;
-};
 
 const onClick = () => {
     fetch("api/user/login?" + `name=${loginForm.value.username}&password=${loginForm.value.password}`, {
@@ -50,6 +37,7 @@ const onClick = () => {
             'Content-Type': 'application/json',
         }
     }).then(res => res.json()).then(res => console.log(res)).catch(err => console.log(err))
+    props.close("login");
 }
 
 </script>

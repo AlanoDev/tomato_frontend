@@ -1,9 +1,10 @@
 <script setup>
 import useArticleStore from '@/stores/useArticleStore';
 import useProfileStore from '@/stores/useProfileStore';
-import Toast from '../Common/Toast/Toast.vue';
 import { store } from '@/stores/layoutStore';
+import { watchEffect, ref } from 'vue';
 const articleStore = useArticleStore();
+const profileStore = useProfileStore();
 
 const onArticleItemClick = (id) => {
     store.currentPage = 'article';
@@ -18,21 +19,19 @@ const onArticleItemClick = (id) => {
 
     }
 }
-const profileStore = useProfileStore();
-
+const articles = ref(articleStore.articles.filter(article => profileStore.favorites.includes(article.id)))
+watchEffect(() => {
+    articles.value = articleStore.articles.filter(article => profileStore.favorites.includes(article.id));
+})
 const onDelete = (id) => {
-    articleStore.articles = articleStore.articles.filter(item => item.id !== id);
-}
-const onEdit = (id) => {
-    profileStore.currentIndex = 3;
-    profileStore.editId = id;
+    profileStore.favorites = profileStore.favorites.filter(item => item != id);
 }
 </script>
 
 <template>
-    <div class="articles_container">
-        <template v-for="article in articleStore.articles" :key="article.id">
-            <div class="article_item" @click="onArticleItemClick(article.id)">
+    <div class="favorite_container">
+        <template v-for="article in articles" :key="article.id">
+            <div class="item" @click="onArticleItemClick(article.id)">
                 <div class="item_img">
                     <img :src="article.img" alt="">
                 </div>
@@ -43,7 +42,6 @@ const onEdit = (id) => {
                     {{ article.date }}
                 </div>
                 <div class="item_operation">
-                    <button class="item_edit" @click.stop="onEdit(article.id)">Edit</button>
                     <button class="item_delete" @click.stop="onDelete(article.id)">Delete</button>
                 </div>
             </div>
@@ -53,7 +51,7 @@ const onEdit = (id) => {
 </template>
 
 <style scoped>
-.articles_container {
+.favorite_container {
     width: 98%;
     height: 98%;
     background-color: gray;
@@ -75,7 +73,7 @@ const onEdit = (id) => {
 
 }
 
-.article_item {
+.item {
     width: 90%;
     height: 90px;
     background-color: white;
@@ -85,7 +83,7 @@ const onEdit = (id) => {
     border-radius: 5px;
 }
 
-.article_item:hover {
+.item:hover {
     background-color: #f0f0f0;
     cursor: pointer;
 }
@@ -118,28 +116,19 @@ const onEdit = (id) => {
 }
 
 .item_operation {
-    width: 15%;
     display: flex;
     justify-content: space-between;
     column-gap: 10px;
-    margin: 0 10px;
+    margin-left: auto;
+    margin-right: 10px;
 }
 
 .item_operation button {
-    width: 140px;
+    width: 80px;
     height: 40px;
     border-radius: 5px;
     cursor: pointer;
     border: none;
-}
-
-.item_edit {
-    background-color: blue;
-    color: white;
-}
-
-.item_edit:hover {
-    background-color: darkblue;
 }
 
 .item_delete {
