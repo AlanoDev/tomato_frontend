@@ -8,13 +8,13 @@ const props = defineProps({
         type: Number,
         required: true
     },
-    date: {
-        type: String,
-        default: '2024-4-4',
+    article_id: {
+        type: Number,
+        required: true
     },
 })
 const valid = ref(true);
-const history = store.articles.find(item => item.id == props.id);
+const history = store.articles.find(item => item.id == props.article_id);
 if (history == undefined) {
     valid.value = false;
 }
@@ -24,13 +24,10 @@ if (history == undefined) {
     <div class="history_item_container">
         <template v-if="valid">
             <div class="item_img">
-                <img :src="history.img" alt="">
+                <img :src="history.image" alt="">
             </div>
             <div class="item_title">
                 {{ history.title }}
-            </div>
-            <div class="item_date">
-                {{ props.date }}
             </div>
             <div class="item_delete">
                 <button @click.stop="emit('delete', props.id)">Delete</button>

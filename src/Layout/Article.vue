@@ -1,25 +1,29 @@
 <script setup>
 import useArticleStore from '@/stores/useArticleStore';
-import useProfileStore from '@/stores/useProfileStore';
+import useProfileStore, { addHistory, addFavorite } from '@/stores/useProfileStore';
 import useUserStore from '@/stores/useUserStore';
 import LoginDialog from '@/components/Common/LoginDialog/LoginDialog.vue';
-import { ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { store } from '@/stores/layoutStore';
 import Toast from '@/components/Common/Toast/Toast.vue';
 const articleStore = useArticleStore();
 const profileStore = useProfileStore();
 const userStore = useUserStore();
 const article = articleStore.articles.find(article => article.id === store.articleId);
+
 const onBack = () => {
     store.currentPage = store.lastPage;
 }
 const color = ref("gray");
 watchEffect(() => {
-    if (profileStore.favorites.includes(article.id)) {
+    if (profileStore.favorites.find(item => item.article_id == article.id) != undefined) {
         color.value = "red";
     } else {
         color.value = "gray";
     }
+})
+onMounted(() => {
+    addHistory(store.articleId)
 })
 const doFaviorite = () => {
     if (!userStore.isLogin) {
@@ -27,20 +31,13 @@ const doFaviorite = () => {
             message: "Please login first",
         }, () => {
             LoginDialog.show((res) => {
-                if (res == 'login') {
-                    userStore.isLogin = true;
-                }
             })
         })
         if (!userStore.isLogin) {
             return
         }
     }
-    if (profileStore.favorites.includes(article.id)) {
-        profileStore.favorites = profileStore.favorites.filter(item => item != article.id);
-    } else {
-        profileStore.favorites.push(article.id);
-    }
+    addFavorite(article.id)
 }
 </script>
 
@@ -52,7 +49,7 @@ const doFaviorite = () => {
             </svg>
 
             <div class="cover">
-                <img :src="article.img" alt="">
+                <img :src="article.image" alt="">
             </div>
             <div class="title">
                 <h1>{{ article.title }}</h1>

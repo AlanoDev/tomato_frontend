@@ -1,8 +1,8 @@
 <script setup>
 import useArticleStore from '@/stores/useArticleStore';
-import useProfileStore from '@/stores/useProfileStore';
+import useProfileStore, { deleteFavorite,getAllFavorites } from '@/stores/useProfileStore';
 import { store } from '@/stores/layoutStore';
-import { watchEffect, ref } from 'vue';
+import { watchEffect, ref, onMounted } from 'vue';
 const articleStore = useArticleStore();
 const profileStore = useProfileStore();
 
@@ -10,22 +10,17 @@ const onArticleItemClick = (id) => {
     store.currentPage = 'article';
     store.lastPage = 'profile';
     store.articleId = id;
-    if (profileStore.histories.find(history => history.id === id) === undefined) {
-        console.log(profileStore.histories);
-        profileStore.histories.push({
-            id: id,
-            date: new Date().toLocaleString(),
-        });
-
-    }
 }
-const articles = ref(articleStore.articles.filter(article => profileStore.favorites.includes(article.id)))
+const articles = ref(articleStore.articles.filter(article => profileStore.favorites.find(item => item.article_id == article.id) != undefined))
 watchEffect(() => {
-    articles.value = articleStore.articles.filter(article => profileStore.favorites.includes(article.id));
+    articles.value = articleStore.articles.filter(article => profileStore.favorites.find(item => item.article_id == article.id) != undefined)
 })
 const onDelete = (id) => {
-    profileStore.favorites = profileStore.favorites.filter(item => item != id);
+    deleteFavorite(id)
 }
+onMounted(()=>{
+    getAllFavorites()
+})
 </script>
 
 <template>
@@ -33,7 +28,7 @@ const onDelete = (id) => {
         <template v-for="article in articles" :key="article.id">
             <div class="item" @click="onArticleItemClick(article.id)">
                 <div class="item_img">
-                    <img :src="article.img" alt="">
+                    <img :src="article.image" alt="">
                 </div>
                 <div class="item_title">
                     {{ article.title }}

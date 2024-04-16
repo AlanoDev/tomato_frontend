@@ -1,22 +1,33 @@
 <script setup>
-import useProfileStore from '@/stores/useProfileStore';
+import useProfileStore, { deleteHistory } from '@/stores/useProfileStore';
 import HistoryItem from '@/components/Profile/HistoryItem.vue';
 import { store } from '@/stores/layoutStore';
+import { onMounted } from 'vue';
+import useUserStore from '@/stores/useUserStore';
 const profileStore = useProfileStore();
 const onDelete = (id) => {
-    profileStore.histories = profileStore.histories.filter(item => item.id !== id);
+    deleteHistory(id);
 }
 const onHistoryItemClick = (id) => {
     store.currentPage = 'article';
     store.lastPage = 'profile';
     store.articleId = id;
 }
+onMounted(() => {
+    fetch(`/api/history/${useUserStore().userId}`, {
+        method: "GET"
+    }).then(res => res.json()).then(res => {
+        profileStore.histories = res.data;
+    })
+
+})
 </script>
 
 <template>
     <div class="history_container">
-        <template v-for="(item, index) in profileStore.histories" :key="item.id">
-            <HistoryItem @click="onHistoryItemClick(item.id)" :id="item.id" :date="item.date" @delete="onDelete" />
+        <template v-for="item in profileStore.histories" :key="item.id">
+            <HistoryItem @click="onHistoryItemClick(item.article_id)" :article_id="item.article_id" :id="item.id"
+                @delete="onDelete" />
         </template>
     </div>
 </template>
