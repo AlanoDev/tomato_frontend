@@ -7,13 +7,11 @@ import { ref } from 'vue';
 const userStore = useUserStore();
 const onClick = () => {
     LoginDialog.show((res) => {
-        if(res=='login')
-            userStore.isLogin = true;
     })
 }
-const onAvatarClick=()=>{
-    store.currentPage='profile';
-    store.lastPage='home';
+const onAvatarClick = () => {
+    store.currentPage = 'profile';
+    store.lastPage = 'home';
 }
 
 </script>

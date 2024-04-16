@@ -1,7 +1,6 @@
 <script setup>
 import useArticleStore from '@/stores/useArticleStore';
 import useProfileStore from '@/stores/useProfileStore';
-import Toast from '../Common/Toast/Toast.vue';
 import { store } from '@/stores/layoutStore';
 const articleStore = useArticleStore();
 
@@ -9,14 +8,6 @@ const onArticleItemClick = (id) => {
     store.currentPage = 'article';
     store.lastPage = 'profile';
     store.articleId = id;
-    if (profileStore.histories.find(history => history.id === id) === undefined) {
-        console.log(profileStore.histories);
-        profileStore.histories.push({
-            id: id,
-            date: new Date().toLocaleString(),
-        });
-
-    }
 }
 const profileStore = useProfileStore();
 
@@ -24,7 +15,7 @@ const onDelete = (id) => {
     articleStore.articles = articleStore.articles.filter(item => item.id !== id);
 }
 const onEdit = (id) => {
-    profileStore.currentIndex = 3;
+    profileStore.currentIndex = 4;
     profileStore.editId = id;
 }
 </script>
@@ -34,7 +25,7 @@ const onEdit = (id) => {
         <template v-for="article in articleStore.articles" :key="article.id">
             <div class="article_item" @click="onArticleItemClick(article.id)">
                 <div class="item_img">
-                    <img :src="article.img" alt="">
+                    <img :src="article.image" alt="">
                 </div>
                 <div class="item_title">
                     {{ article.title }}

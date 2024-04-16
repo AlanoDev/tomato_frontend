@@ -6,4 +6,21 @@ import Layout from '@/Layout/Layout.vue'
   <Layout />
 </template>
 
-<style scoped></style>
+<style>
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar for Firefox */
+body {
+  overflow: -moz-scrollbars-none;
+}
+</style>

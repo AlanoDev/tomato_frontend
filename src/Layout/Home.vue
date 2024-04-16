@@ -3,43 +3,43 @@ import Banner from '@/components/Home/Banner.vue';
 import Card from '@/components/Home/Card.vue';
 import NavBar from '@/Layout/NavBar.vue'
 import useArticleStore from '@/stores/useArticleStore';
-import useProfileStore from '@/stores/useProfileStore';
-import { ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { store } from '@/stores/layoutStore';
 const articleStore = useArticleStore();
-const profileStore = useProfileStore();
 
-let articles = articleStore.articles.slice(0, 8);
+let articles = ref(null);
+
+onMounted(() => {
+    fetch('/api/article/all').then(res => res.json()).then(res => {
+        articleStore.articles = res.data;
+        articles.value = articleStore.articles.slice(0, 8);
+    })
+})
 const onCardClick = (id, idx) => {
     store.currentPage = 'article';
     store.lastPage = 'home';
     store.articleId = id;
-    if (profileStore.histories.find(history => history.id === id) === undefined) {
-        console.log(profileStore.histories);
-        profileStore.histories.push({
-            id: id,
-            date: new Date().toLocaleString(),
-        });
-
-    }
 }
-
 
 const searchInput = ref('');
 watchEffect(() => {
     if (searchInput.value.length === 0) {
-        articles = articleStore.articles.slice(0, 8);
+        articles.value = articleStore.articles.slice(0, 8);
     } else {
-        articles = articleStore.articles.filter(article => article.title.includes(searchInput.value)).slice(0, 8);
+        articles.value = articleStore.searchArticles(searchInput.value)
     }
+},{
+    flush:'sync'
 })
+
 const onSearchClick = () => {
     if (searchInput.value.length === 0) {
-        articles = articleStore.articles.slice(0, 8);
+        articles.value = articleStore.articles.slice(0, 8);
     } else {
-        articles = articleStore.articles.filter(article => article.title.includes(searchInput.value)).slice(0, 8);
+        articles.value = articleStore.searchArticles(searchInput.value)
     }
 }
+
 const onUploadClick = async () => {
     try {
         const fileHandle = await window.showOpenFilePicker({
@@ -56,11 +56,14 @@ const onUploadClick = async () => {
             ],
         })
         const fileData = await fileHandle[0].getFile();
-        const reader = new FileReader()
-        reader.onload = () => {
-            articleInfo.img = reader.result
-        }
-        reader.readAsDataURL(fileData)
+        let form = new FormData()
+        form.append("file", fileData)
+        const res = await fetch('api//disease/recognition', {
+            method: 'POST',
+            body: form
+        }).then(res => res.json())
+        searchInput.value = res.data.disease
+        articleStore.updateDiseases()
     } catch (error) {
         console.log(error);
     }
@@ -75,7 +78,7 @@ const onUploadClick = async () => {
         </div>
         <div class="cards">
             <template v-for="(article, idx) in articles" :key="article.id">
-                <Card :title="article.title" :img="article.img" @click="onCardClick(article.id, idx)"></Card>
+                <Card :title="article.title" :img="article.image" @click="onCardClick(article.id, idx)"></Card>
             </template>
         </div>
         <div class="search_bar">

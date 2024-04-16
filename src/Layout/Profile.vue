@@ -5,15 +5,19 @@ import History from '@/components/Profile/History.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import Favorite from '@/components/Profile/Favorite.vue';
 import Edit from '@/components/Profile/Edit.vue';
-import useProfileStore from '@/stores/useProfileStore';
+import useProfileStore, { clearProfileUserInfo } from '@/stores/useProfileStore';
 import useUserStore from '@/stores/useUserStore';
 import { store } from '@/stores/layoutStore';
 const profileStore = useProfileStore();
 const userStore = useUserStore();
 const onLogOut = () => {
     userStore.isLogin = false;
+    userStore.userId = undefined;
     store.currentPage = 'home';
+    clearProfileUserInfo();
 }
+
+
 </script>
 
 <template>
@@ -29,6 +33,10 @@ const onLogOut = () => {
         <div class="profile_operation">
             <button @click="store.currentPage = 'home'">Home</button>
             <button @click="onLogOut">Logout</button>
+            <button @click="() => {
+                profileStore.currentIndex = 4
+                profileStore.editId = undefined
+            }">Publish</button>
         </div>
     </div>
 </template>
@@ -60,7 +68,6 @@ const onLogOut = () => {
     right: -85px;
     top: 1%;
     width: 80px;
-    height: 150px;
     background-color: #dfdfdf;
     box-sizing: border-box;
     display: flex;
@@ -68,6 +75,7 @@ const onLogOut = () => {
     justify-content: center;
     align-items: center;
     border-radius: 10px;
+    padding: 10px 0;
     row-gap: 20px;
 }
 

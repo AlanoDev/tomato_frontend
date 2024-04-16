@@ -1,52 +1,91 @@
 <script setup>
 import useProfileStore from '@/stores/useProfileStore';
 import useArticleStore from '@/stores/useArticleStore';
+import useUserStore from '@/stores/useUserStore';
 import Toast from '@/components/Common/Toast'
-import { reactive } from 'vue';
+import { getAllDisease } from '@/api/api';
+import { onMounted, reactive, ref, watchEffect } from 'vue';
 const profileStore = useProfileStore();
+const userSotre = useUserStore();
 const articleStore = useArticleStore();
-const article = articleStore.articles.find(item => item.id == profileStore.editId);
 
 const articleInfo = reactive({
-    title: article.title,
-    content: article.content,
-    img: article.img
+    title: "",
+    content: "",
+    image: "",
+    disease: -1,
+})
+let allDisease = ref([])
+let selectedDisease = ref(-1);
+
+onMounted(() => {
+    getAllDisease().then(res => {
+        if (res.error == '') {
+            allDisease.value = res.data;
+        }
+    })
+})
+
+const article = articleStore.articles.find(item => item.id == profileStore.editId) || { title: "", content: "", image: "", disease: -1 };
+articleInfo.title = article.title;
+articleInfo.content = article.content;
+articleInfo.image = article.image;
+articleInfo.disease = article.disease;
+
+watchEffect(() => {
+    articleInfo.disease = selectedDisease.value;
 })
 
 const onResetClick = () => {
     articleInfo.title = article.title;
     articleInfo.content = article.content;
-    articleInfo.img = article.img;
+    articleInfo.image = article.image;
+    articleInfo.disease = article.disease;
 }
 
 const onSaveClick = () => {
-    article.title = articleInfo.title;
-    article.content = articleInfo.content;
-    article.img = articleInfo.img;
+    if (profileStore.editId == undefined) {
+        articleStore.addArticle(articleInfo)
+    } else {
+        article.title = articleInfo.title;
+        article.content = articleInfo.content;
+        article.image = articleInfo.image;
+        article.disease = articleInfo.disease;
+        articleStore.updateArticle(profileStore.editId, article)
+    }
     Toast.show({
         message: "save success",
     }, () => { })
 }
 const onImgClick = async () => {
-    const fileHandle = await window.showOpenFilePicker({
-        multiple: false,
-        excludeAcceptAllOption: true,
-        types: [
-            {
-                description: 'Images',
-                accept: {
-                    'image/png': ['.png'],
-                    'image/jpeg': ['.jpg'],
+    try {
+        const fileHandle = await window.showOpenFilePicker({
+            multiple: false,
+            excludeAcceptAllOption: true,
+            types: [
+                {
+                    description: 'Images',
+                    accept: {
+                        'image/png': ['.png'],
+                        'image/jpeg': ['.jpg'],
+                    },
                 },
-            },
-        ],
-    })
-    const fileData = await fileHandle[0].getFile();
-    const reader = new FileReader()
-    reader.onload = () => {
-        articleInfo.img = reader.result
+            ],
+        })
+
+        const fileData = await fileHandle[0].getFile();
+        const formData = new FormData();
+        formData.append('file', fileData);
+        fetch('/api/file/' + userSotre.userId, {
+            method: 'POST',
+            body: formData,
+        }).then(res => res.json()).then(res => {
+            articleInfo.image = res.data.link;
+        })
     }
-    reader.readAsDataURL(fileData)
+    catch (err) {
+        console.log(err);
+    }
 }
 
 </script>
@@ -56,10 +95,16 @@ const onImgClick = async () => {
         <div class="edit_title">
             <label>Title:</label>
             <input type="text" v-model="articleInfo.title">
+            <label>Disease:</label>
+            <select v-model="selectedDisease">
+                <template v-for="item in allDisease" :key="item.id">
+                    <option :selected="item.id == articleInfo.disease" :value="item.id">{{ item.title }}</option>
+                </template>
+            </select>
         </div>
         <div class="edit_img" @click="onImgClick">
             <label>Cover:</label>
-            <img :src="articleInfo.img" alt="">
+            <img :src="articleInfo.image" alt="">
         </div>
         <div class="edit_content">
             <div>Content:</div>
